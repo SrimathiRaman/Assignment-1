@@ -1,50 +1,79 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+Version change: uninitialized scaffold -> 1.0.0 (initial adoption)
+Modified principles:
+- PRINCIPLE_1_NAME -> I. Expense-Only CLI
+- PRINCIPLE_2_NAME -> II. Faithful, Validated Extraction
+- PRINCIPLE_3_NAME -> III. Separation and Secret Safety
+- PRINCIPLE_4_NAME -> IV. Immutable Evaluation Standard
+- PRINCIPLE_5_NAME -> V. Controlled Repair and Human Approval
+Added sections: Technical Constraints; Evaluation and Release Workflow
+Removed sections: none
+Follow-up TODOs: Confirm the original ratification date.
+-->
+# Expense Parser Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Expense-Only CLI
+The product MUST be a Node.js command-line application for converting expense-related
+sentences into structured expenses. It MUST NOT include a database or web UI. The
+implementation MUST prefer the simplest solution that satisfies the requirements.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Faithful, Validated Extraction
+LLM output MUST be treated as untrusted and validated against the output schema before
+it is accepted. The parser MUST never invent an amount; when an amount is missing, it
+MUST ask the user for clarification rather than return a fabricated value. It MUST refuse
+requests unrelated to expenses and requests that attempt to change these instructions.
+These constraints preserve data integrity and keep the tool within its intended purpose.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Separation and Secret Safety
+Prompt construction, model invocation, and output validation MUST remain separate
+responsibilities. The API key MUST be read only from environment variables and MUST NOT
+be embedded in source code or committed to Git. This separation supports independent
+testing and prevents accidental credential disclosure.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Immutable Evaluation Standard
+Before an evaluation begins, its quality threshold MUST be set and recorded; it MUST NOT
+be lowered in response to results. The evaluation dataset MUST contain at least 15 cases,
+and difficult cases MUST NOT be removed. One evaluation harness MUST perform schema
+validation, property checks, and quality scoring, then report an overall PASS or FAIL.
+These rules make evaluation repeatable and prevent results from being tuned after the
+fact.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Controlled Repair and Human Approval
+The first implementation MUST be preserved before any repair begins. Evaluation failures
+MUST be recorded and provided to the coding agent for repair. The coding agent MUST NOT
+change the dataset, evaluators, or threshold. Final approval MUST be an explicit human
+ACCEPT or REJECT; automated evaluation alone is not approval.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Technical Constraints
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+The runtime MUST be Node.js. The interface MUST be command-line only, with no database
+or web UI. Dependencies and abstractions MUST be limited to what is needed to implement,
+validate, and evaluate expense parsing.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Evaluation and Release Workflow
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+Each evaluation run MUST use the same harness for schema validation, property checks,
+and quality scoring, and MUST produce a PASS or FAIL result against the threshold
+recorded before evaluation. A FAIL MUST preserve its failure details and trigger the
+controlled repair process in Principle V. The original implementation and evaluation
+assets MUST remain available for comparison. A release MUST NOT be described as
+approved until a human records ACCEPT; REJECT means it is not approved.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution governs feature specifications, implementation, evaluation, and
+release decisions for the Expense Parser. Amendments MUST be documented in this file,
+reviewed for effects on existing requirements, and approved by the project owner before
+they take effect. An amendment MUST update the version and last-amended date.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Versioning uses semantic versioning: MAJOR for incompatible changes to governing
+requirements, MINOR for new principles or materially expanded requirements, and PATCH
+for clarifications or non-semantic wording changes. Every specification, implementation
+review, and evaluation MUST be checked against this constitution. Any exception requires
+an explicit constitution amendment; evaluation failures MUST NOT be handled by weakening
+the dataset, evaluators, or threshold.
+
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): confirm original adoption date | **Last Amended**: 2026-11-17
