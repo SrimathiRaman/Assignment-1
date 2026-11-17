@@ -55,10 +55,10 @@ description.
 They MUST NOT change `evals/dataset.json`, `.harness/**`,
 `tests/evaluators.test.js`, or `.harness/thresholds.json`.
 
-- [ ] T009 [P] [US1] Write the initial system prompt for faithful extraction of one clear expense, rupee amount, permitted category, reference date, concise supported description, and JSON-only output in `prompts/system.md`. Covers FR-001, FR-002, FR-003, FR-008, OS-001.1, INV-001.1, PROP-001.1, GR-001.1, GR-001.3.
-- [ ] T010 [P] [US1] Implement the OpenAI Responses API `fetch` client in `src/llm/openai-client.js`; load `OPENAI_API_KEY` and `OPENAI_MODEL` from the process environment, apply a bounded timeout, and surface network, API, refusal, and incomplete-response outcomes without automatic retries. Covers FR-012, FR-013, FR-014.
-- [ ] T011 [P] [US1] Implement the Ajv result validator in `src/validation/result.js` using `schemas/expense-result.schema.json`; reject malformed JSON, unknown properties, invalid variants, and out-of-range fields. Covers FR-006, OS-001.1, OS-001.2, OS-001.3, INV-001.2, INV-001.3, PROP-001.4.
-- [ ] T012 [US1] Initialize dotenv in `src/cli.js` before reading configuration, then wire input parsing, local-date default, optional `--reference-date`, prompt, model client, result validator, JSON stdout, and explicit stderr/nonzero failures; keep all app-only boundary files unchanged. Covers FR-001, FR-002, FR-006, FR-007, FR-008, FR-012, FR-013, OS-001.1, INV-001.2, PROP-001.1, PROP-001.2.
+- [X] T009 [P] [US1] Write the initial system prompt for faithful extraction of one clear expense, rupee amount, permitted category, reference date, concise supported description, and JSON-only output in `prompts/system.md`. Covers FR-001, FR-002, FR-003, FR-008, OS-001.1, INV-001.1, PROP-001.1, GR-001.1, GR-001.3.
+- [X] T010 [P] [US1] Implement the OpenAI Responses API `fetch` client in `src/llm/openai-client.js`; load `OPENAI_API_KEY` and `OPENAI_MODEL` from the process environment, apply a bounded timeout, and surface network, API, refusal, and incomplete-response outcomes without automatic retries. Covers FR-012, FR-013, FR-014.
+- [X] T011 [P] [US1] Implement the Ajv result validator in `src/validation/result.js` using `schemas/expense-result.schema.json`; reject malformed JSON, unknown properties, invalid variants, and out-of-range fields. Covers FR-006, OS-001.1, OS-001.2, OS-001.3, INV-001.2, INV-001.3, PROP-001.4.
+- [X] T012 [US1] Initialize dotenv in `src/cli.js` before reading configuration, then wire input parsing, local-date default, optional `--reference-date`, prompt, model client, result validator, JSON stdout, and explicit stderr/nonzero failures; keep all app-only boundary files unchanged. Covers FR-001, FR-002, FR-006, FR-007, FR-008, FR-012, FR-013, OS-001.1, INV-001.2, PROP-001.1, PROP-001.2.
 
 ## Phase 6: User Story 2 - Clarify Incomplete or Unsupported Expense (Priority: P1)
 
@@ -68,8 +68,8 @@ recorded faithfully.
 **Independent Test**: Run E005-E011, E012-E013, and E017; verify each returns a valid
 `clarify` result with no expense and exactly one question.
 
-- [ ] T013 [P] [US2] Extend `prompts/system.md` to clarify missing or unclear amounts, multiple expenses, non-rupee currency, invalid-range amounts, and future dates without guessing or returning partial expenses. Covers FR-004, FR-007, OS-001.2, INV-001.1, INV-001.3, INV-001.4, INV-001.5, PROP-001.3, GR-001.3, GR-001.4.
-- [ ] T014 [P] [US2] Extend date and result handling in `src/cli.js` so relative dates use the supplied local reference date, future add-expense results are not accepted, and clarification results contain no expense; keep all app-only boundary files unchanged. Covers FR-004, FR-007, OS-001.2, INV-001.3, INV-001.5, PROP-001.2, PROP-001.3, GR-001.3, GR-001.4.
+- [X] T013 [P] [US2] Extend `prompts/system.md` to clarify missing or unclear amounts, multiple expenses, non-rupee currency, invalid-range amounts, and future dates without guessing or returning partial expenses. Covers FR-004, FR-007, OS-001.2, INV-001.1, INV-001.3, INV-001.4, INV-001.5, PROP-001.3, GR-001.3, GR-001.4.
+- [X] T014 [P] [US2] Extend date and result handling in `src/cli.js` so relative dates use the supplied local reference date, future add-expense results are not accepted, and clarification results contain no expense; keep all app-only boundary files unchanged. Covers FR-004, FR-007, OS-001.2, INV-001.3, INV-001.5, PROP-001.2, PROP-001.3, GR-001.3, GR-001.4.
 
 ## Phase 7: User Story 3 - Refuse Out-of-Scope or Instruction-Override Requests (Priority: P1)
 
@@ -79,7 +79,7 @@ including overrides combined with expense details.
 **Independent Test**: Run E014-E016; verify each returns a valid `refuse` result with no
 expense and a non-empty reason.
 
-- [ ] T015 [US3] Extend `prompts/system.md` to refuse non-expense requests and attempts to ignore, reveal, or replace instructions, with refusal taking precedence over expense extraction; keep all app-only boundary files unchanged. Covers FR-005, OS-001.3, INV-001.3, INV-001.6, PROP-001.5, GR-001.1, GR-001.2.
+- [X] T015 [US3] Extend `prompts/system.md` to refuse non-expense requests and attempts to ignore, reveal, or replace instructions, with refusal taking precedence over expense extraction; keep all app-only boundary files unchanged. Covers FR-005, OS-001.3, INV-001.3, INV-001.6, PROP-001.5, GR-001.1, GR-001.2.
 
 ## Phase 8: Run Evaluation
 
