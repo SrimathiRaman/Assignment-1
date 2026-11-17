@@ -1,12 +1,20 @@
 # Feature Specification: Expense Parser
 
-**Feature Branch**: `master`
+**Feature Branch**: `001-expense-parser`
 
 **Created**: 2026-11-17
 
 **Status**: Draft
 
 **Input**: User description: "Build a command line Expense Parser. User types one sentence like 'spent 250 on lunch yesterday' with today's date, and the app returns a structured result with one of three intents: add_expense, clarify, or refuse. Define user stories, functional requirements and acceptance criteria with example inputs. Add numbered sections with IDs for output schema, invariants, behaviour properties, guardrail rules, and evaluation threshold."
+
+## Clarifications
+
+### Session 2026-11-17
+
+- Q: If the LLM is unavailable or returns output that fails schema validation, what should the CLI do? → A: Report an explicit CLI error on stderr and exit with a failure status; return no result.
+- Q: May the CLI send the user's expense sentence to an external LLM service for parsing? → A: Yes; send only the expense sentence and required date context, and do not store it in the CLI.
+- Q: What data-handling rule should apply to expense text sent to the external LLM provider? → A: The provider may handle the text under its documented standard data policy.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -94,14 +102,19 @@ instructions; verify a refusal reason and no expense are returned.
   highest-priority issue; never include a partial expense.
 - A category that cannot be confidently assigned to one named category maps to `Other`.
 - Empty input receives a clarification prompt asking for one expense sentence.
+- If the LLM is unavailable or its output fails schema validation, the CLI reports an
+  explicit error on stderr, exits with a failure status, and returns no structured result.
+- When using an external LLM, the CLI sends only the expense sentence and date context
+  needed for parsing and does not store the submitted sentence.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
 - **FR-001**: The application MUST accept one natural-language expense sentence from the
-  user and return exactly one structured result with intent `add_expense`, `clarify`, or
-  `refuse`.
+  user and, when processing succeeds, return exactly one structured result with intent
+  `add_expense`, `clarify`, or `refuse`. On model or validation failure, it MUST return no
+  structured result and report an explicit CLI error.
 - **FR-002**: The application MUST return `add_expense` only when it can identify one
   expense with an amount in whole rupees from 1 through 1,000,000 inclusive, a permitted
   category, a date that is not in the future, and a short description.
@@ -131,6 +144,17 @@ instructions; verify a refusal reason and no expense are returned.
   before evaluation. The threshold MUST never be lowered.
 - **FR-011**: Final approval MUST be recorded by a human as `ACCEPT` or `REJECT`;
   evaluation `PASS` alone MUST NOT constitute approval.
+- **FR-012**: If the LLM is unavailable or its output fails schema validation, the
+  application MUST write an explicit error to stderr, exit with a failure status, and
+  return no structured result. It MUST NOT retry automatically or misrepresent the
+  failure as a user clarification.
+- **FR-013**: When parsing through an external LLM, the application MUST send only the
+  expense sentence and the date context required for parsing. The CLI MUST NOT store the
+  submitted sentence.
+- **FR-014**: Submitted text sent to an external LLM provider is subject to that
+  provider's documented standard data policy. The application MUST NOT claim that the
+  provider does not retain or use submitted text unless the provider's policy guarantees
+  that behavior.
 
 ### 1. Output Schema (OS-001)
 
@@ -244,3 +268,5 @@ repairs against the same evaluation baseline:
   defining which fields are scored.
 - Amounts below 1 or above 1,000,000 rupees produce a clarification question rather than
   a refusal.
+- The external provider may retain or use submitted text according to its documented
+  standard data policy; the CLI itself does not store the submitted sentence.
