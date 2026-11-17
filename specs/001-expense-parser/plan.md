@@ -148,6 +148,7 @@ specs/001-expense-parser/
 ├── research.md
 ├── data-model.md
 ├── quickstart.md
+├── traceability.md
 ├── contracts/
 │   ├── cli.md
 │   └── evaluation.md
