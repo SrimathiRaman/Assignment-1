@@ -17,31 +17,31 @@ tests, app stories, evaluation, and verification. Every task cites specification
 
 **Purpose**: Establish the Node.js project, secret handling, and shared output contract.
 
-- [ ] T001 [P] Initialize the ESM project and `test` / `evaluate` scripts in `package.json` and `package-lock.json`; include dotenv, Ajv, ajv-formats, and Vitest dependencies. Covers FR-001, FR-010, EVAL-001.5.
-- [ ] T002 [P] Add `.gitignore` and a placeholder-only `.env.example` for `OPENAI_API_KEY` and `OPENAI_MODEL`; ensure `.env` is ignored and no real key is added. Covers FR-013, FR-014.
-- [ ] T003 [P] Define `schemas/expense-result.schema.json` with exactly the three OS-001 branches and no extra properties: amount integer 1 through 1,000,000 inclusive; category one of `Food`, `Transport`, `Housing`, `Utilities`, `Health`, `Entertainment`, `Other`; date a valid `YYYY-MM-DD` calendar date; description non-empty and at most 80 characters; clarify has one non-empty question and no expense; refuse has one non-empty reason and no expense. Leave the dynamic `date <= referenceDate` comparison to T005 and T014. Covers FR-002, FR-003, FR-006, OS-001.1, OS-001.2, OS-001.3, INV-001.2, INV-001.5.
+- [X] T001 [P] Initialize the ESM project and `test` / `evaluate` scripts in `package.json` and `package-lock.json`; include dotenv, Ajv, ajv-formats, and Vitest dependencies. Covers FR-001, FR-010, EVAL-001.5.
+- [X] T002 [P] Add `.gitignore` and a placeholder-only `.env.example` for `OPENAI_API_KEY` and `OPENAI_MODEL`; ensure `.env` is ignored and no real key is added. Covers FR-013, FR-014.
+- [X] T003 [P] Define `schemas/expense-result.schema.json` with exactly the three OS-001 branches and no extra properties: amount integer 1 through 1,000,000 inclusive; category one of `Food`, `Transport`, `Housing`, `Utilities`, `Health`, `Entertainment`, `Other`; date a valid `YYYY-MM-DD` calendar date; description non-empty and at most 80 characters; clarify has one non-empty question and no expense; refuse has one non-empty reason and no expense. Leave the dynamic `date <= referenceDate` comparison to T005 and T014. Covers FR-002, FR-003, FR-006, OS-001.1, OS-001.2, OS-001.3, INV-001.2, INV-001.5.
 
 ## Phase 2: Harness Foundation
 
 **Purpose**: Implement evaluation rules and the single harness command before creating
 the dataset or application.
 
-- [ ] T004 Freeze the evaluation threshold values in `.harness/thresholds.json`: 100% schema, 100% property checks, and 85% of cases scoring at least 0.75; mark this file protected from repair edits. Covers FR-009, FR-010, GR-001.5, EVAL-001.1, EVAL-001.2, EVAL-001.3, EVAL-001.5.
-- [ ] T005 Implement schema, requirement-mapped property (including `date <= referenceDate`), exact-field quality, pass-rate, and completed-evaluation decision logic in `.harness/evaluators.js`, consuming `schemas/expense-result.schema.json` and `.harness/thresholds.json`. Keep the completed `evaluationDecision` to `PASS` or `FAIL`. Covers FR-006, FR-010, INV-001.1 through INV-001.6, PROP-001.1 through PROP-001.6, EVAL-001.1 through EVAL-001.5.
-- [ ] T006 Implement the one-command sequential harness in `.harness/run.js`; call `src/cli.js` per case, capture stdout/stderr/status, append per-layer results to `evidence/eval-results.json`, append completed failures to `evidence/failure-feedback.json`, and record `LLM_ERROR` / `NOT_RUN` for an unreachable model. Record `attemptStatus: CANT BE DETERMINED` in a separate `EvaluationAttempt` record, not an `EvaluationRun`; completed runs receive only `evaluationDecision: PASS|FAIL`. Covers FR-009, FR-010, FR-012, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
+- [X] T004 Freeze the evaluation threshold values in `.harness/thresholds.json`: 100% schema, 100% property checks, and 85% of cases scoring at least 0.75; mark this file protected from repair edits. Covers FR-009, FR-010, GR-001.5, EVAL-001.1, EVAL-001.2, EVAL-001.3, EVAL-001.5.
+- [X] T005 Implement schema, requirement-mapped property (including `date <= referenceDate`), exact-field quality, pass-rate, and completed-evaluation decision logic in `.harness/evaluators.js`, consuming `schemas/expense-result.schema.json` and `.harness/thresholds.json`. Keep the completed `evaluationDecision` to `PASS` or `FAIL`. Covers FR-006, FR-010, INV-001.1 through INV-001.6, PROP-001.1 through PROP-001.6, EVAL-001.1 through EVAL-001.5.
+- [X] T006 Implement the one-command sequential harness in `.harness/run.js`; call `src/cli.js` per case, capture stdout/stderr/status, append per-layer results to `evidence/eval-results.json`, append completed failures to `evidence/failure-feedback.json`, and record `LLM_ERROR` / `NOT_RUN` for an unreachable model. Record `attemptStatus: CANT BE DETERMINED` in a separate `EvaluationAttempt` record, not an `EvaluationRun`; completed runs receive only `evaluationDecision: PASS|FAIL`. Covers FR-009, FR-010, FR-012, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
 
 ## Phase 3: Fixed Evaluation Dataset
 
 **Purpose**: Create the protected evaluation set before app implementation.
 
-- [ ] T007 Create at least 22 stable, uniquely identified cases in `evals/dataset.json`, each with `type` in `normal`, `boundary`, `ambiguous`, `missing_information`, `malformed`, or `adversarial`, plus `input`, fixed `referenceDate`, schema-valid `expectedResult`, and applicable `requirementIds`; include the planned cases E001-E022 and retain every difficult case during repairs. Covers FR-009, FR-010, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
+- [X] T007 Create at least 22 stable, uniquely identified cases in `evals/dataset.json`, each with `type` in `normal`, `boundary`, `ambiguous`, `missing_information`, `malformed`, or `adversarial`, plus `input`, fixed `referenceDate`, schema-valid `expectedResult`, and applicable `requirementIds`; include the planned cases E001-E022 and retain every difficult case during repairs. Covers FR-009, FR-010, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
 
 ## Phase 4: Evaluator Unit Tests
 
 **Purpose**: Verify the harness evaluators offline with fixed sample outputs before
 implementing the app.
 
-- [ ] T008 Add and run Vitest sample-output tests in `tests/evaluators.test.js` for valid and invalid schema branches, amount/date/category properties, guardrail outcomes, exact-field scores, threshold boundaries, replay determinism for identical captured outputs, and incomplete-attempt classification; do not assert identical results from independent live model calls. Covers FR-006, FR-009, FR-010, FR-012, PROP-001.1 through PROP-001.6, GR-001.1 through GR-001.5, EVAL-001.1 through EVAL-001.5.
+- [X] T008 Add and run Vitest sample-output tests in `tests/evaluators.test.js` for valid and invalid schema branches, amount/date/category properties, guardrail outcomes, exact-field scores, threshold boundaries, replay determinism for identical captured outputs, and incomplete-attempt classification; do not assert identical results from independent live model calls. Covers FR-006, FR-009, FR-010, FR-012, PROP-001.1 through PROP-001.6, GR-001.1 through GR-001.5, EVAL-001.1 through EVAL-001.5.
 
 ## Phase 5: User Story 1 - Record One Clear Expense (Priority: P1)
 

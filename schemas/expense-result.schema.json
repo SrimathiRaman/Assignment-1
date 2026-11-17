@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://expense-parser.local/schemas/expense-result.schema.json",
+  "oneOf": [
+    { "$ref": "#/definitions/AddExpenseResult" },
+    { "$ref": "#/definitions/ClarifyResult" },
+    { "$ref": "#/definitions/RefuseResult" }
+  ],
+  "definitions": {
+    "AddExpenseResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intent", "expense"],
+      "properties": {
+        "intent": { "const": "add_expense" },
+        "expense": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["amountRupees", "category", "date", "description"],
+          "properties": {
+            "amountRupees": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "category": {
+              "type": "string",
+              "enum": [
+                "Food",
+                "Transport",
+                "Housing",
+                "Utilities",
+                "Health",
+                "Entertainment",
+                "Other"
+              ]
+            },
+            "date": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80,
+              "pattern": "\\S"
+            }
+          }
+        }
+      }
+    },
+    "ClarifyResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intent", "question"],
+      "properties": {
+        "intent": { "const": "clarify" },
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "RefuseResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intent", "reason"],
+      "properties": {
+        "intent": { "const": "refuse" },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    }
+  }
+}
