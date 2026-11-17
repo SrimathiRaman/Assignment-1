@@ -61,9 +61,9 @@ sequentially.
 | Evaluation threshold | PASS | Schema 100%, property checks 100%, and at least 85% of cases score 0.75 or higher. |
 
 No constitution violations or exceptions are required. `CANT BE DETERMINED` is reserved
-for an incomplete evaluation caused by an unreachable model; it is not a completed
-evaluation result and does not replace the required PASS/FAIL decision for completed
-runs.
+for an incomplete evaluation attempt caused by an unreachable model. For completed
+evaluations, `evaluationDecision` is always `PASS` or `FAIL`; an incomplete attempt has
+`runStatus: CANT BE DETERMINED` and no evaluation decision.
 
 ## Architecture
 
@@ -90,13 +90,15 @@ runs.
    evidence. During repair, `evals/dataset.json`, `.harness/evaluators.js`, and
    `.harness/thresholds.json` are protected and are not changed by the coding agent. If
    a model request cannot reach the service, mark that case `LLM_ERROR`, stop the run,
-   mark unattempted cases `NOT_RUN`, and record the run as `CANT BE DETERMINED`; do not
-   turn an infrastructure failure into a threshold FAIL or a user clarification.
+   mark unattempted cases `NOT_RUN`, and set `runStatus` to `CANT BE DETERMINED` with no
+   `evaluationDecision`; do not turn an infrastructure failure into a threshold FAIL or
+   a user clarification.
 
 The external API may return different content across live requests. Evaluator functions
 are deterministic for captured inputs and outputs; each live response and model name
 must be recorded so a completed run can be reproduced from its evidence. Live model
-repeatability is not guaranteed by temperature settings.
+repeatability is not guaranteed by temperature settings. `PROP-001.6` applies to replay
+of identical captured outputs, not to independent live requests.
 
 ### Implementation Order
 
@@ -131,7 +133,7 @@ evaluation results, run summary, and failure feedback.
 - [contracts/cli.md](./contracts/cli.md) defines CLI arguments, stdout JSON, errors,
   configuration, and exit statuses.
 - [contracts/evaluation.md](./contracts/evaluation.md) defines dataset inputs, evidence
-  records, scoring, and `PASS` / `FAIL` / `CANT BE DETERMINED`.
+  records, scoring, and evaluation outcomes.
 
 ### Quickstart
 

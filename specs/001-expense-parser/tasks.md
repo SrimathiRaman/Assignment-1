@@ -19,7 +19,7 @@ tests, app stories, evaluation, and verification. Every task cites specification
 
 - [ ] T001 [P] Initialize the ESM project and `test` / `evaluate` scripts in `package.json` and `package-lock.json`; include dotenv, Ajv, ajv-formats, and Vitest dependencies. Covers FR-001, FR-010, EVAL-001.5.
 - [ ] T002 [P] Add `.gitignore` and a placeholder-only `.env.example` for `OPENAI_API_KEY` and `OPENAI_MODEL`; ensure `.env` is ignored and no real key is added. Covers FR-013, FR-014.
-- [ ] T003 [P] Define `schemas/expense-result.schema.json` with exactly the three OS-001 branches and no extra properties: amount integer 1 through 1,000,000 inclusive; category one of `Food`, `Transport`, `Housing`, `Utilities`, `Health`, `Entertainment`, `Other`; date a valid `YYYY-MM-DD` no later than the reference date; description non-empty and at most 80 characters; clarify has one non-empty question and no expense; refuse has one non-empty reason and no expense. Covers FR-002, FR-003, FR-006, OS-001.1, OS-001.2, OS-001.3, INV-001.2.
+- [ ] T003 [P] Define `schemas/expense-result.schema.json` with exactly the three OS-001 branches and no extra properties: amount integer 1 through 1,000,000 inclusive; category one of `Food`, `Transport`, `Housing`, `Utilities`, `Health`, `Entertainment`, `Other`; date a valid `YYYY-MM-DD` calendar date; description non-empty and at most 80 characters; clarify has one non-empty question and no expense; refuse has one non-empty reason and no expense. Leave the dynamic `date <= referenceDate` comparison to T005 and T014. Covers FR-002, FR-003, FR-006, OS-001.1, OS-001.2, OS-001.3, INV-001.2, INV-001.5.
 
 ## Phase 2: Harness Foundation
 
@@ -27,8 +27,8 @@ tests, app stories, evaluation, and verification. Every task cites specification
 the dataset or application.
 
 - [ ] T004 Freeze the evaluation threshold values in `.harness/thresholds.json`: 100% schema, 100% property checks, and 85% of cases scoring at least 0.75; mark this file protected from repair edits. Covers FR-009, FR-010, GR-001.5, EVAL-001.1, EVAL-001.2, EVAL-001.3, EVAL-001.5.
-- [ ] T005 Implement schema, requirement-mapped property, exact-field quality, pass-rate, and decision evaluators in `.harness/evaluators.js`, consuming `schemas/expense-result.schema.json` and `.harness/thresholds.json`. Covers FR-006, FR-010, INV-001.1 through INV-001.6, PROP-001.1 through PROP-001.6, EVAL-001.1 through EVAL-001.5.
-- [ ] T006 Implement the one-command sequential harness in `.harness/run.js`; call `src/cli.js` per case, capture stdout/stderr/status, append per-layer results to `evidence/eval-results.json`, append completed failures to `evidence/failure-feedback.json`, and record `LLM_ERROR` / `NOT_RUN` / `CANT BE DETERMINED` for an unreachable model. Covers FR-009, FR-010, FR-012, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
+- [ ] T005 Implement schema, requirement-mapped property (including `date <= referenceDate`), exact-field quality, pass-rate, and completed-evaluation decision logic in `.harness/evaluators.js`, consuming `schemas/expense-result.schema.json` and `.harness/thresholds.json`. Keep the completed `evaluationDecision` to `PASS` or `FAIL`. Covers FR-006, FR-010, INV-001.1 through INV-001.6, PROP-001.1 through PROP-001.6, EVAL-001.1 through EVAL-001.5.
+- [ ] T006 Implement the one-command sequential harness in `.harness/run.js`; call `src/cli.js` per case, capture stdout/stderr/status, append per-layer results to `evidence/eval-results.json`, append completed failures to `evidence/failure-feedback.json`, and record `LLM_ERROR` / `NOT_RUN` for an unreachable model. Set `runStatus: CANT BE DETERMINED` and leave `evaluationDecision` unset for that incomplete attempt; completed evaluations receive only `PASS` or `FAIL`. Covers FR-009, FR-010, FR-012, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
 
 ## Phase 3: Fixed Evaluation Dataset
 
@@ -41,7 +41,7 @@ the dataset or application.
 **Purpose**: Verify the harness evaluators offline with fixed sample outputs before
 implementing the app.
 
-- [ ] T008 Add and run Vitest sample-output tests in `tests/evaluators.test.js` for valid and invalid schema branches, amount/date/category properties, guardrail outcomes, exact-field scores, threshold boundaries, and incomplete-run classification; do not call the live API. Covers FR-006, FR-009, FR-010, FR-012, PROP-001.1 through PROP-001.6, GR-001.1 through GR-001.5, EVAL-001.1 through EVAL-001.5.
+- [ ] T008 Add and run Vitest sample-output tests in `tests/evaluators.test.js` for valid and invalid schema branches, amount/date/category properties, guardrail outcomes, exact-field scores, threshold boundaries, replay determinism for identical captured outputs, and incomplete-run classification; do not assert identical results from independent live model calls. Covers FR-006, FR-009, FR-010, FR-012, PROP-001.1 through PROP-001.6, GR-001.1 through GR-001.5, EVAL-001.1 through EVAL-001.5.
 
 ## Phase 5: User Story 1 - Record One Clear Expense (Priority: P1)
 
@@ -58,7 +58,7 @@ They MUST NOT change `evals/dataset.json`, `.harness/**`,
 - [ ] T009 [P] [US1] Write the initial system prompt for faithful extraction of one clear expense, rupee amount, permitted category, reference date, concise supported description, and JSON-only output in `prompts/system.md`. Covers FR-001, FR-002, FR-003, FR-008, OS-001.1, INV-001.1, PROP-001.1, GR-001.1, GR-001.3.
 - [ ] T010 [P] [US1] Implement the OpenAI Responses API `fetch` client in `src/llm/openai-client.js`; load `OPENAI_API_KEY` and `OPENAI_MODEL` from the process environment, apply a bounded timeout, and surface network, API, refusal, and incomplete-response outcomes without automatic retries. Covers FR-012, FR-013, FR-014.
 - [ ] T011 [P] [US1] Implement the Ajv result validator in `src/validation/result.js` using `schemas/expense-result.schema.json`; reject malformed JSON, unknown properties, invalid variants, and out-of-range fields. Covers FR-006, OS-001.1, OS-001.2, OS-001.3, INV-001.2, INV-001.3, PROP-001.4.
-- [ ] T012 [US1] Wire input parsing, local-date default, optional `--reference-date`, prompt, model client, result validator, JSON stdout, and explicit stderr/nonzero failures in `src/cli.js`; keep all app-only boundary files unchanged. Covers FR-001, FR-002, FR-006, FR-007, FR-008, FR-012, OS-001.1, INV-001.2, PROP-001.1, PROP-001.2.
+- [ ] T012 [US1] Initialize dotenv in `src/cli.js` before reading configuration, then wire input parsing, local-date default, optional `--reference-date`, prompt, model client, result validator, JSON stdout, and explicit stderr/nonzero failures; keep all app-only boundary files unchanged. Covers FR-001, FR-002, FR-006, FR-007, FR-008, FR-012, FR-013, OS-001.1, INV-001.2, PROP-001.1, PROP-001.2.
 
 ## Phase 6: User Story 2 - Clarify Incomplete or Unsupported Expense (Priority: P1)
 
@@ -85,7 +85,7 @@ expense and a non-empty reason.
 
 **Purpose**: Evaluate the first implementation against the fixed dataset and threshold.
 
-- [ ] T016 Run `npm run evaluate` and inspect `evidence/eval-results.json` and `evidence/failure-feedback.json`; preserve the first implementation in a Git commit/tag before any repair, and record a completed `PASS` / `FAIL` or an unreachable-model `CANT BE DETERMINED`. Covers FR-009, FR-010, FR-012, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
+- [ ] T016 Run `npm run evaluate` and inspect `evidence/eval-results.json` and `evidence/failure-feedback.json`; preserve the first implementation in a Git commit/tag before any repair. Record `evaluationDecision: PASS|FAIL` only for completed evaluations; for an unreachable model, record `runStatus: CANT BE DETERMINED` with no evaluation decision. Covers FR-009, FR-010, FR-012, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
 
 ## Phase 9: Repair Application Failures
 

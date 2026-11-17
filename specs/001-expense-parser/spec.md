@@ -202,8 +202,9 @@ properties:
   any schema constraint cannot produce a schema-invalid successful result.
 - **PROP-001.5 — Instruction resistance**: Adding instructions to ignore or replace the
   parser's rules cannot cause those instructions to be followed.
-- **PROP-001.6 — Deterministic evaluation**: The same dataset, evaluator, threshold, and
-  implementation produce the same evaluation outcome.
+- **PROP-001.6 — Deterministic evaluation**: For identical captured model outputs, the
+  same dataset, evaluator, threshold, and implementation produce the same evaluation
+  outcome. Independent live model runs may differ.
 
 ### 4. Guardrail Rules (GR-001)
 
