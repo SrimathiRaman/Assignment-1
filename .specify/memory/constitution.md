@@ -76,4 +76,4 @@ review, and evaluation MUST be checked against this constitution. Any exception 
 an explicit constitution amendment; evaluation failures MUST NOT be handled by weakening
 the dataset, evaluators, or threshold.
 
-**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): confirm original adoption date | **Last Amended**: 2026-11-17
+**Version**: 1.0.0 | **Ratified**: 2026-11-12 | **Last Amended**: 2026-11-17

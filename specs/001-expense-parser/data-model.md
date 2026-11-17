@@ -82,10 +82,20 @@ An evidence run records:
 - `modelName` and the fixed threshold values used.
 - A result for each attempted case and the run-level schema/property pass rates.
 - Quality case count at or above 0.75 and its percentage.
-- `decision`: `PASS`, `FAIL`, or `CANT BE DETERMINED`.
+- `evaluationDecision`: `PASS` or `FAIL`.
 
-Completed runs are appended to `evidence/eval-results.json` so repairs do not erase the
-initial implementation's results.
+Only a completed evaluation produces an `EvaluationRun`. Completed runs are appended
+to `evidence/eval-results.json` so repairs do not erase the initial implementation's
+results.
+
+## Evaluation Attempt
+
+If model connectivity prevents an evaluation from completing, record an
+`EvaluationAttempt` separately in `evidence/eval-results.json`. It records an attempt
+identifier, timestamp, model name, attempted case results, and
+`attemptStatus: CANT BE DETERMINED`. The affected case is `LLM_ERROR`; cases not attempted
+after the run stops are `NOT_RUN`. An attempt has no `evaluationDecision` and is not an
+`EvaluationRun`.
 
 ## Failure Feedback
 

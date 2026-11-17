@@ -34,8 +34,9 @@ Report `PASS` only when all thresholds are met; otherwise, a completed run is `F
 Do not lower the threshold or alter the dataset/evaluators to repair an implementation.
 
 If the model cannot be reached, mark the affected case `LLM_ERROR`, stop further requests,
-mark unattempted cases `NOT_RUN`, and report `CANT BE DETERMINED`. This is an incomplete
-run, not a threshold `FAIL`.
+mark unattempted cases `NOT_RUN`, and append a separate `EvaluationAttempt` with
+`attemptStatus: CANT BE DETERMINED`. This is not an `EvaluationRun` and has no
+`evaluationDecision`; it is not a threshold `FAIL`.
 
 If the app returns no result because its model response is unparseable or schema-invalid,
 record a schema failure, a zero quality score, and the CLI error detail for that case.
@@ -43,8 +44,12 @@ This is a completed evaluation failure, not an `LLM_ERROR`.
 
 ## Evidence
 
-Append each run to `evidence/eval-results.json`. Each run includes model name,
-timestamp, threshold, per-case result for each layer, pass rates, and final decision.
+Append completed `EvaluationRun` records to `evidence/eval-results.json`. Each run
+includes model name, timestamp, threshold, per-case result for each layer, pass rates,
+and a final `evaluationDecision` of `PASS` or `FAIL`. Append connectivity-interrupted
+`EvaluationAttempt` records to the same file separately, with attempt status and no
+`evaluationDecision`.
+
 Append completed failing cases to `evidence/failure-feedback.json` with the case, output,
 failed rule ID, and quality score. Preserve prior evidence and the first implementation
 before repair.

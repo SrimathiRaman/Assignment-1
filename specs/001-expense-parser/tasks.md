@@ -28,7 +28,7 @@ the dataset or application.
 
 - [ ] T004 Freeze the evaluation threshold values in `.harness/thresholds.json`: 100% schema, 100% property checks, and 85% of cases scoring at least 0.75; mark this file protected from repair edits. Covers FR-009, FR-010, GR-001.5, EVAL-001.1, EVAL-001.2, EVAL-001.3, EVAL-001.5.
 - [ ] T005 Implement schema, requirement-mapped property (including `date <= referenceDate`), exact-field quality, pass-rate, and completed-evaluation decision logic in `.harness/evaluators.js`, consuming `schemas/expense-result.schema.json` and `.harness/thresholds.json`. Keep the completed `evaluationDecision` to `PASS` or `FAIL`. Covers FR-006, FR-010, INV-001.1 through INV-001.6, PROP-001.1 through PROP-001.6, EVAL-001.1 through EVAL-001.5.
-- [ ] T006 Implement the one-command sequential harness in `.harness/run.js`; call `src/cli.js` per case, capture stdout/stderr/status, append per-layer results to `evidence/eval-results.json`, append completed failures to `evidence/failure-feedback.json`, and record `LLM_ERROR` / `NOT_RUN` for an unreachable model. Set `runStatus: CANT BE DETERMINED` and leave `evaluationDecision` unset for that incomplete attempt; completed evaluations receive only `PASS` or `FAIL`. Covers FR-009, FR-010, FR-012, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
+- [ ] T006 Implement the one-command sequential harness in `.harness/run.js`; call `src/cli.js` per case, capture stdout/stderr/status, append per-layer results to `evidence/eval-results.json`, append completed failures to `evidence/failure-feedback.json`, and record `LLM_ERROR` / `NOT_RUN` for an unreachable model. Record `attemptStatus: CANT BE DETERMINED` in a separate `EvaluationAttempt` record, not an `EvaluationRun`; completed runs receive only `evaluationDecision: PASS|FAIL`. Covers FR-009, FR-010, FR-012, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
 
 ## Phase 3: Fixed Evaluation Dataset
 
@@ -41,7 +41,7 @@ the dataset or application.
 **Purpose**: Verify the harness evaluators offline with fixed sample outputs before
 implementing the app.
 
-- [ ] T008 Add and run Vitest sample-output tests in `tests/evaluators.test.js` for valid and invalid schema branches, amount/date/category properties, guardrail outcomes, exact-field scores, threshold boundaries, replay determinism for identical captured outputs, and incomplete-run classification; do not assert identical results from independent live model calls. Covers FR-006, FR-009, FR-010, FR-012, PROP-001.1 through PROP-001.6, GR-001.1 through GR-001.5, EVAL-001.1 through EVAL-001.5.
+- [ ] T008 Add and run Vitest sample-output tests in `tests/evaluators.test.js` for valid and invalid schema branches, amount/date/category properties, guardrail outcomes, exact-field scores, threshold boundaries, replay determinism for identical captured outputs, and incomplete-attempt classification; do not assert identical results from independent live model calls. Covers FR-006, FR-009, FR-010, FR-012, PROP-001.1 through PROP-001.6, GR-001.1 through GR-001.5, EVAL-001.1 through EVAL-001.5.
 
 ## Phase 5: User Story 1 - Record One Clear Expense (Priority: P1)
 
@@ -85,13 +85,13 @@ expense and a non-empty reason.
 
 **Purpose**: Evaluate the first implementation against the fixed dataset and threshold.
 
-- [ ] T016 Run `npm run evaluate` and inspect `evidence/eval-results.json` and `evidence/failure-feedback.json`; preserve the first implementation in a Git commit/tag before any repair. Record `evaluationDecision: PASS|FAIL` only for completed evaluations; for an unreachable model, record `runStatus: CANT BE DETERMINED` with no evaluation decision. Covers FR-009, FR-010, FR-012, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
+- [ ] T016 Run `npm run evaluate` and inspect `evidence/eval-results.json` and `evidence/failure-feedback.json`; preserve the first implementation in a Git commit/tag before any repair. Completed runs record `evaluationDecision: PASS|FAIL`; an unreachable model produces a separate `EvaluationAttempt` with `attemptStatus: CANT BE DETERMINED`, not an evaluation-run decision. Covers FR-009, FR-010, FR-012, SC-003, SC-004, EVAL-001.1 through EVAL-001.5.
 
 ## Phase 9: Repair Application Failures
 
 **Purpose**: Repair only app behavior identified by recorded evaluation failures.
 
-- [ ] T017 If T016 is `FAIL`, give the recorded case, output, failed rule ID, and score to the coding agent; repair only `src/**` or `prompts/system.md` and rerun `npm run evaluate` after each repair until `PASS` or escalation. Preserve the first implementation and do not edit `evals/dataset.json`, `.harness/**`, `tests/evaluators.test.js`, or `.harness/thresholds.json`. If T016 is `CANT BE DETERMINED`, restore model/config/network availability without weakening evaluation assets. Covers FR-009, FR-010, FR-012, GR-001.5, SC-004, EVAL-001.1 through EVAL-001.5.
+- [ ] T017 If T016 records a completed `FAIL`, give the recorded case, output, failed rule ID, and score to the coding agent; repair only `src/**` or `prompts/system.md` and rerun `npm run evaluate` after each repair until `PASS` or escalation. Preserve the first implementation and do not edit `evals/dataset.json`, `.harness/**`, `tests/evaluators.test.js`, or `.harness/thresholds.json`. If T016 records an `EvaluationAttempt` with `attemptStatus: CANT BE DETERMINED`, restore model/config/network availability without weakening evaluation assets. Covers FR-009, FR-010, FR-012, GR-001.5, SC-004, EVAL-001.1 through EVAL-001.5.
 
 ## Phase 10: Verification and Approval
 

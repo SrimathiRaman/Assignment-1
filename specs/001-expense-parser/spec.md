@@ -140,8 +140,10 @@ instructions; verify a refusal reason and no expense are returned.
   provided to the coding agent for repair. The agent MUST NOT change the dataset,
   evaluators, or threshold, and the first implementation MUST be preserved before repair.
 - **FR-010**: One evaluation harness MUST perform schema validation, property checks, and
-  quality scoring and report an overall `PASS` or `FAIL` against the threshold fixed
-  before evaluation. The threshold MUST never be lowered.
+  quality scoring and report an overall `PASS` or `FAIL` for each completed evaluation
+  run against the threshold fixed before evaluation. If model connectivity prevents
+  completion, the harness MUST record a separate evaluation attempt with status
+  `CANT BE DETERMINED`, not an evaluation decision. The threshold MUST never be lowered.
 - **FR-011**: Final approval MUST be recorded by a human as `ACCEPT` or `REJECT`;
   evaluation `PASS` alone MUST NOT constitute approval.
 - **FR-012**: If the LLM is unavailable or its output fails schema validation, the
@@ -231,8 +233,10 @@ repairs against the same evaluation baseline:
 - **EVAL-001.4 — Quality score**: The score for one case is the number of expected
   output fields that match divided by the total number of expected output fields for that
   case.
-- **EVAL-001.5 — Overall result**: The harness reports `PASS` only when all three
-  thresholds are met; otherwise it reports `FAIL`.
+- **EVAL-001.5 — Overall result**: For a completed evaluation run, the harness reports
+  `PASS` only when all three thresholds are met; otherwise it reports `FAIL`. A
+  connectivity-interrupted attempt is not a completed evaluation run and is recorded
+  separately with attempt status `CANT BE DETERMINED`, without an evaluation decision.
 
 ### Key Entities *(include if data involved)*
 

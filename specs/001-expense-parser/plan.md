@@ -60,10 +60,11 @@ sequentially.
 | V. Controlled Repair and Human Approval | PASS | Preserve the first implementation and evidence before repairs; provide failure feedback; repair agent cannot change dataset, evaluator, or threshold; human records ACCEPT or REJECT. |
 | Evaluation threshold | PASS | Schema 100%, property checks 100%, and at least 85% of cases score 0.75 or higher. |
 
-No constitution violations or exceptions are required. `CANT BE DETERMINED` is reserved
-for an incomplete evaluation attempt caused by an unreachable model. For completed
-evaluations, `evaluationDecision` is always `PASS` or `FAIL`; an incomplete attempt has
-`runStatus: CANT BE DETERMINED` and no evaluation decision.
+No constitution violations or exceptions are required. `CANT BE DETERMINED` is an
+`EvaluationAttempt` status for a connectivity-interrupted attempt, not an
+`EvaluationRun` decision. Only a completed evaluation produces an `EvaluationRun`, whose
+`evaluationDecision` is always `PASS` or `FAIL`. Attempts and completed runs are
+recorded as distinct record types in the evidence file.
 
 ## Architecture
 
@@ -82,17 +83,18 @@ evaluations, `evaluationDecision` is always `PASS` or `FAIL`; an incomplete atte
    output produces an error on stderr and a nonzero exit code.
 5. **Evaluation harness**: One command spawns the app once per dataset case. For each
    completed response, it runs schema validation, requirement-mapped property checks,
-   and exact expected-field quality scoring. It writes the model name, each case's
-   results, pass rates, and the final decision to `evidence/eval-results.json`.
+   and exact expected-field quality scoring. It records completed runs with
+   `evaluationDecision: PASS|FAIL` and interrupted attempts separately with
+   `attemptStatus: CANT BE DETERMINED` in `evidence/eval-results.json`.
 6. **Repair feedback**: A completed failing case is recorded with its case, output,
    failed rule ID, and score in `evidence/failure-feedback.json`. Before any repair,
    preserve the first implementation with a Git commit/tag and preserve its evaluation
    evidence. During repair, `evals/dataset.json`, `.harness/evaluators.js`, and
    `.harness/thresholds.json` are protected and are not changed by the coding agent. If
    a model request cannot reach the service, mark that case `LLM_ERROR`, stop the run,
-   mark unattempted cases `NOT_RUN`, and set `runStatus` to `CANT BE DETERMINED` with no
-   `evaluationDecision`; do not turn an infrastructure failure into a threshold FAIL or
-   a user clarification.
+   mark unattempted cases `NOT_RUN`, and record `attemptStatus: CANT BE DETERMINED` in a
+   separate `EvaluationAttempt`; do not create an `EvaluationRun` or turn an
+   infrastructure failure into a threshold FAIL or a user clarification.
 
 The external API may return different content across live requests. Evaluator functions
 are deterministic for captured inputs and outputs; each live response and model name
@@ -185,7 +187,7 @@ evals/
 ├── evaluators.js            # Schema, property, and quality layers
 └── thresholds.json          # Fixed before evaluation; protected during repair
 evidence/
-├── eval-results.json        # Evaluation run history and decisions
+├── eval-results.json        # Completed runs: PASS/FAIL; interrupted attempts: attemptStatus CANT BE DETERMINED
 └── failure-feedback.json    # Failed-case repair feedback
 ```
 
@@ -203,7 +205,7 @@ reviewed before app implementation; it is not changed during repair.
 | Secrets are environment-only and excluded from Git | PASS |
 | The exact same output schema is consumed by app and harness | PASS |
 | Dataset and evaluator assets precede app implementation and remain protected during repair | PASS |
-| Completed evaluation uses the fixed threshold; unreachable model is an incomplete run | PASS |
+| Completed runs use the fixed threshold; unreachable-model interrupted attempts are recorded separately with attemptStatus CANT BE DETERMINED | PASS |
 | First implementation/evidence is preserved and human approval remains required | PASS |
 
 No post-design constitution violations or unresolved specification decisions were found.
