@@ -55,6 +55,50 @@ function hasOneQuestion(question) {
   );
 }
 
+function getInvalidAmountClarification(text) {
+  let candidate;
+  try {
+    candidate = JSON.parse(text);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      return null;
+    }
+    throw error;
+  }
+
+  if (
+    !candidate ||
+    typeof candidate !== 'object' ||
+    Array.isArray(candidate) ||
+    candidate.intent !== 'add_expense'
+  ) {
+    return null;
+  }
+
+  const expense = candidate.expense;
+  if (!expense || typeof expense !== 'object' || Array.isArray(expense)) {
+    return null;
+  }
+  const amount = expense.amountRupees;
+  if (
+    typeof amount === 'number' &&
+    Number.isFinite(amount) &&
+    (!Number.isInteger(amount) || amount < 1 || amount > 1000000)
+  ) {
+    let question = 'What exact amount in rupees did you spend?';
+    if (amount < 1) {
+      question = 'Please provide a valid positive amount in rupees?';
+    } else if (amount > 1000000) {
+      question = 'Please provide an amount from 1 to 1000000 rupees?';
+    }
+    return {
+      intent: 'clarify',
+      question,
+    };
+  }
+  return null;
+}
+
 function applyResultGuards(result, referenceDate) {
   if (
     result.intent === 'add_expense' &&
@@ -82,6 +126,11 @@ export async function runCli(args = process.argv.slice(2)) {
       intent: 'refuse',
       reason: 'The model provider refused this request.',
     };
+  }
+
+  const amountClarification = getInvalidAmountClarification(response.text);
+  if (amountClarification) {
+    return parseAndValidateResult(JSON.stringify(amountClarification));
   }
 
   const result = parseAndValidateResult(response.text);
