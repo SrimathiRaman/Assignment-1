@@ -5,7 +5,7 @@ Both applications were specified with the GitHub Spec Kit workflow (constitution
 | Part | Application | Type | Harness |
 | --- | --- | --- | --- |
 | [Part-1A](Part-1A/) | Expense Tracker – single-page browser app, data in localStorage | Deterministic | Integrity, lint, security and spec-derived unit/contract tests |
-| [Part-1B](Part-1B/) | Expense Parser – command-line tool that uses an LLM to turn a sentence into a structured expense | Non-deterministic | Schema, invariant/property and quality evaluation over a 22-case dataset |
+| [Part-1B](Part-1B/) | Expense Parser – command-line tool that uses an LLM to turn a sentence into a structured expense | Non-deterministic | Schema, invariant/property and quality evaluation over multiple dataset |
 
 ## Repository structure
 
@@ -28,7 +28,7 @@ Assignment-1/
 ## Prerequisites
 
 - Node.js 20.19 or later and npm
-- Part 1B only: an OpenAI API key
+- Part 1B : an OpenAI API key
 
 ## Part 1A – Expense Tracker
 
