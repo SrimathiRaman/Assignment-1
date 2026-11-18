@@ -1,6 +1,4 @@
-# Assignment 1 – Spec-Driven Development & Harness Engineering
-
-AI-Augmented Software Development Life Cycle (SE ZG534), BITS Pilani WILP.
+# Assignment 1 – Spec-Driven Development & Harness Engineering - AI SDLC
 
 Both applications were specified with the GitHub Spec Kit workflow (constitution → specify → clarify → plan → tasks → analyze → implement) and validated by a harness before a final human ACCEPT/REJECT decision.
 
