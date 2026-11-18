@@ -1,0 +1,6 @@
+{
+  "schemaPassRate": 1,
+  "propertyPassRate": 1,
+  "qualityScoreMinimum": 0.75,
+  "qualityPassRateMinimum": 0.85
+}
