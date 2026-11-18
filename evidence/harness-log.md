@@ -79,7 +79,7 @@ Other observations from the data:
 - Re-run and outcome: E005, E006, and E007 achieved perfect quality scores using the expected wording. However, the same failure appeared in E011, showing the underlying issue was not fully resolved. Quality improved from 9/22 to 12/22, but the run still failed.
 - Root cause addressed? NO, same failure appeared in E011, showing the underlying issue was not fully resolved. 
 
-### Cycle 3 - Removing the copied answers and fixing the one-question failures (run 2 → run 3)
+### Cycle 3 - Removing the copied answers and fixing the one-question failures
 
 - Failed case(s) and rule IDs: E011 failed in Run 2 with the same one-question error seen earlier.
 - Generated output: E011 had none, with the one-question error.
