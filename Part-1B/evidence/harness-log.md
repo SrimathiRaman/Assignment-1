@@ -8,10 +8,10 @@
 - No API key or other secret appears in this file.
 
 ## 2. Threshold and scoring
-| Measure | Threshold 
-| Schema pass rate | 100% of cases 
-| Property pass rate | 100% of cases 
-| Quality score per case | atleast 0.75 or higher 
+| Measure | Threshold | 
+| Schema pass rate | 100% of cases | 
+| Property pass rate | 100% of cases | 
+| Quality score per case | atleast 0.75 or higher |  
 | Share of cases meeting the quality score | at least 85% |
 
 - Spec section that declares the threshold: Evaluation Threshold (EVAL-001)
