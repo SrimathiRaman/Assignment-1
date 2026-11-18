@@ -85,15 +85,9 @@ function getInvalidAmountClarification(text) {
     Number.isFinite(amount) &&
     (!Number.isInteger(amount) || amount < 1 || amount > 1000000)
   ) {
-    let question = 'What exact amount in rupees did you spend?';
-    if (amount < 1) {
-      question = 'Please provide a valid positive amount in rupees?';
-    } else if (amount > 1000000) {
-      question = 'Please provide an amount from 1 to 1000000 rupees?';
-    }
     return {
       intent: 'clarify',
-      question,
+      question: 'What supported rupee amount should be recorded?',
     };
   }
   return null;

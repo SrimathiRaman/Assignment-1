@@ -55,6 +55,44 @@ function hasOneQuestion(question) {
   );
 }
 
+function getInvalidAmountClarification(text) {
+  let candidate;
+  try {
+    candidate = JSON.parse(text);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      return null;
+    }
+    throw error;
+  }
+
+  if (
+    !candidate ||
+    typeof candidate !== 'object' ||
+    Array.isArray(candidate) ||
+    candidate.intent !== 'add_expense'
+  ) {
+    return null;
+  }
+
+  const expense = candidate.expense;
+  if (!expense || typeof expense !== 'object' || Array.isArray(expense)) {
+    return null;
+  }
+  const amount = expense.amountRupees;
+  if (
+    typeof amount === 'number' &&
+    Number.isFinite(amount) &&
+    (!Number.isInteger(amount) || amount < 1 || amount > 1000000)
+  ) {
+    return {
+      intent: 'clarify',
+      question: 'What supported rupee amount should be recorded?',
+    };
+  }
+  return null;
+}
+
 function applyResultGuards(result, referenceDate) {
   if (
     result.intent === 'add_expense' &&
@@ -82,6 +120,11 @@ export async function runCli(args = process.argv.slice(2)) {
       intent: 'refuse',
       reason: 'The model provider refused this request.',
     };
+  }
+
+  const amountClarification = getInvalidAmountClarification(response.text);
+  if (amountClarification) {
+    return parseAndValidateResult(JSON.stringify(amountClarification));
   }
 
   const result = parseAndValidateResult(response.text);
