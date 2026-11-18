@@ -89,7 +89,7 @@ Other observations from the data:
 - Re-run and outcome: run 3. Schema 22/22 and properties 22/22, the first time both reached 100%. E005 and E006 now ask “What valid rupee amount from 1 to 1000000 did you spend?” and E011 passed. Still FAIL, All 13 failing clarify/refuse cases selected the correct intent but received partial scores because free-text responses are compared using exact text matching.
 - Root cause addressed without weakening anything? Yes. The remaining failure is in how the quality layer scores free text, not in the app’s behaviour.
 
-## 6. Final human review  (YOU)
+## 6. Final human review  
 - Sentences tried by hand (not in the dataset) and what the app returned: 
 "Spent 100 on cinema - {"intent":"add_expense","expense":{"amountRupees":100,"category":"Entertainment","date":"2026-11-19","description":"Cinema"}}, " slept soon today - {"intent":"refuse","reason":"This does not describe an expense."}", "came to bits class - {"intent":"clarify","question":"What was the expense amount in rupees?"} " 
 - Checked that the prompt contains no dataset sentences and no key: YES
