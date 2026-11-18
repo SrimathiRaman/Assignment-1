@@ -8,7 +8,7 @@
 - No API key or other secret appears in this file.
 
 ## 2. Threshold and scoring
-| Measure | Threshold |
+| Measure | Threshold 
 | Schema pass rate | 100% of cases |
 | Property pass rate | 100% of cases |
 | Quality score per case | atleast 0.75 or higher |
