@@ -84,8 +84,9 @@ Other observations from the data:
 
 - Failed case(s) and rule IDs: E011 failed in Run 2 with the same one-question error seen earlier.
 - Generated output: E011 had none, with the one-question error.
-- Evidence given to the agent: The copied clarification sentences were removed, generic clarification wording was retained, and the prompt was strengthened to require exactly one question.
-- What was changed: YOU: the commit hash from git log --oneline -3; copied sentences removed, guard kept with generic wording, and the prompt strengthened to ask exactly one question.
+- Evidence given to the agent: Asked to remove all quoted question text from the prompt. Keep the rule that amounts below 1 or above 1000000 must return clarify.
+In getInvalidAmountClarification, keep the guard but use your own generic wording, not any sentence from the dataset.
+- What was changed: Copied sentences was removed, guard kept with generic wording, and the prompt strengthened to ask exactly one question.
 - Re-run and outcome: run 3. Schema 22/22 and properties 22/22, the first time both reached 100%. E005 and E006 now ask “What valid rupee amount from 1 to 1000000 did you spend?” and E011 passed. Still FAIL, All 13 failing clarify/refuse cases selected the correct intent but received partial scores because free-text responses are compared using exact text matching.
 - Root cause addressed without weakening anything? Yes. The remaining failure is in how the quality layer scores free text, not in the app’s behaviour.
 
@@ -94,6 +95,6 @@ Other observations from the data:
 "Spent 100 on cinema - {"intent":"add_expense","expense":{"amountRupees":100,"category":"Entertainment","date":"2026-11-19","description":"Cinema"}}, " slept soon today - {"intent":"refuse","reason":"This does not describe an expense."}", "came to bits class - {"intent":"clarify","question":"What was the expense amount in rupees?"} " 
 - Checked that the prompt contains no dataset sentences and no key: YES
 - Checked that .env is not tracked in Git: Yes
-- Decision: ACCEPT / REJECT - ACCEPT
+- Decision: ACCEPT / REJECT - ACCEPT as the schema and properties passed 100%, and every quality failure had the correct intent and failed only because of exact-text scoring, which is a known limitation
 - Justification: Manual Checks confirmed
 - Known limitations and residual risks: NO UI, Performance Target was not measured, No saving or Editing expense
