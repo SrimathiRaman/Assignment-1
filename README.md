@@ -28,7 +28,7 @@ Assignment-1/
 ## Prerequisites
 
 - Node.js 20.19 or later and npm
-- Part 1B : an OpenAI API key
+- Part 1B : Node 22.12 and an OpenAI API key
 
 ## Part 1A – Expense Tracker
 
@@ -81,7 +81,7 @@ The result is one of three intents: `add_expense`, `clarify` or `refuse`.
 ### Run the evaluation harness
 
 ```powershell
-npm run eval
+npm run evaluate
 ```
 
 The harness runs every case in `evals/dataset.json` through the application, then applies three layers – schema validation, invariant/property checks and quality scoring – and compares the totals with the threshold declared in the specification (schema 100%, properties 100%, at least 85% of cases with quality score ≥ 0.75). Results are appended to `evidence/eval-results.json`. If the model cannot be reached, the attempt is recorded separately as `CANT BE DETERMINED` and is never counted as a pass.
@@ -96,7 +96,7 @@ Inputs are sent to the OpenAI API under its standard data policy. Use only synth
 
 | Part | Final harness result | Human decision |
 | --- | --- | --- |
-| 1A | PASS (run 005) | See `Part-1A/evidence/harness-log.md` |
+| 1A | PASS (run 004) | See `Part-1A/evidence/harness-log.md` |
 | 1B | FAIL (run 3: schema 100%, properties 100%, quality 40.9%) | See `Part-1B/evidence/harness-log.md` |
 
 Known limitations for each part are listed in its harness log.
