@@ -46,7 +46,8 @@ The deterministic harness rejected the implementation. These are the findings fr
 Fix the root cause in src/ only.
 
 - What the agent changed (files, summary): 
-A G0 integrity failure concerns the locked test file, so didnot attempt to repair it from.
+It changed no code. It reported that the test data conflicted with the spec and the data model, and asked which rule to follow
+Confirmed the spec rule was correct and the test data was wrong. Changed only createdAt from 2 to 1794312000001; the expected order and the assertion stayed the same
 
 ### Cycle 3
 - Failing gate and rule/test:G0-integrity FAILED
@@ -58,7 +59,7 @@ The deterministic harness rejected the implementation. These are the findings fr
 Fix the root cause in src/ only.
 
 - What the agent changed (files, summary): 
-Unloacked the files and updated
+Unlocked the files and updated
 
 - Re-run number and outcome of the same gates: RUN-004 / PASS
 
